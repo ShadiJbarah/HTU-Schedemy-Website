@@ -41,7 +41,7 @@ export default function InstructorsPage() {
         // Assuming your API endpoint for instructors is /api/instructor
         // This uses the Next.js API route at src/app/api/instructor/route.ts
         // which in turn fetches from your Spring Boot backend.
-        const res = await fetch('/api/instructor');
+        const res = await fetch('/instructor');
         if (!res.ok) {
           console.error('Failed to fetch instructors from Next.js API route:', res.status, res.statusText);
           // Optionally, try fetching directly from Spring Boot as a fallback or for more detailed error
@@ -75,7 +75,7 @@ export default function InstructorsPage() {
     };
 
     try {
-      const response = await fetch('/api/instructor', { // Posting to Next.js API route
+      const response = await fetch('/instructor', { // Posting to Next.js API route
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newInstructorFromForm),
@@ -107,7 +107,7 @@ export default function InstructorsPage() {
     const allInstructorIds = instructors.map(instructor => instructor.id);
 
     try {
-      const response = await fetch('/api/email', {
+      const response = await fetch('/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(allInstructorIds),
@@ -130,7 +130,7 @@ export default function InstructorsPage() {
     setLoadingEmailIds(prev => new Set(prev.add(instructorId)));
 
     try {
-      const response = await fetch('/api/email', {
+      const response = await fetch('/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify([instructorId]),
@@ -166,109 +166,109 @@ export default function InstructorsPage() {
   };
 
   return (
-      <div>
-        <Card>
-          <CardHeader className="flex flex-row justify-between items-center">
-            <CardTitle>Manage Instructors</CardTitle>
-            <Button
-                onClick={handleSendEmailToAll}
-                disabled={isLoadingEmailAll || instructors.length === 0}
-            >
-              {isLoadingEmailAll ? 'Sending...' : 'Send Email For All'}
-            </Button>
-          </CardHeader>
+    <div>
+      <Card>
+        <CardHeader className="flex flex-row justify-between items-center">
+          <CardTitle>Manage Instructors</CardTitle>
+          <Button
+            onClick={handleSendEmailToAll}
+            disabled={isLoadingEmailAll || instructors.length === 0}
+          >
+            {isLoadingEmailAll ? 'Sending...' : 'Send Email For All'}
+          </Button>
+        </CardHeader>
 
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Job Title</TableHead>
-                  <TableHead>Teaching Load</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Department</TableHead>
+                <TableHead>Job Title</TableHead>
+                <TableHead>Teaching Load</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {instructors.map((instructor) => (
+                <TableRow key={instructor.id}>
+                  <TableCell className="font-medium">{instructor.name}</TableCell>
+                  <TableCell>{instructor.email}</TableCell>
+                  <TableCell>{instructor.department}</TableCell>
+                  <TableCell>{instructor.jobTitle}</TableCell>
+                  <TableCell>{instructor.teachingLoad ?? 'N/A'}</TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mr-2 hover:text-accent-foreground disabled:opacity-50"
+                      onClick={() => handleSendEmailToInstructor(instructor.id)}
+                      disabled={loadingEmailIds.has(instructor.id)}
+                    >
+                      {loadingEmailIds.has(instructor.id) ? 'Sending...' : 'Send Email'}
+                    </Button>
+                    {/*<Button variant="ghost" size="sm" onClick={() => handleDeleteInstructor(instructor.id)} className="text-destructive hover:text-destructive/90 disabled:opacity-50" disabled>Delete</Button>*/}
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {instructors.map((instructor) => (
-                    <TableRow key={instructor.id}>
-                      <TableCell className="font-medium">{instructor.name}</TableCell>
-                      <TableCell>{instructor.email}</TableCell>
-                      <TableCell>{instructor.department}</TableCell>
-                      <TableCell>{instructor.jobTitle}</TableCell>
-                      <TableCell>{instructor.teachingLoad ?? 'N/A'}</TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mr-2 hover:text-accent-foreground disabled:opacity-50"
-                            onClick={() => handleSendEmailToInstructor(instructor.id)}
-                            disabled={loadingEmailIds.has(instructor.id)}
-                        >
-                          {loadingEmailIds.has(instructor.id) ? 'Sending...' : 'Send Email'}
-                        </Button>
-                        {/*<Button variant="ghost" size="sm" onClick={() => handleDeleteInstructor(instructor.id)} className="text-destructive hover:text-destructive/90 disabled:opacity-50" disabled>Delete</Button>*/}
-                      </TableCell>
-                    </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
 
-          <Dialog open={showDialog} onOpenChange={setShowDialog}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Instructor</DialogTitle>
-              </DialogHeader>
-              <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleAddInstructor();
-                  }}
-                  className="space-y-4"
-              >
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-                <input
-                    type="text"
-                    name="department"
-                    placeholder="Department"
-                    value={formData.department}
-                    onChange={handleInputChange}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-                <input
-                    type="text"
-                    name="jobTitle"
-                    placeholder="Job Title"
-                    value={formData.jobTitle}
-                    onChange={handleInputChange}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-                {/*<Button type="submit">Add Instructor</Button>*/}
-              </form>
-            </DialogContent>
-          </Dialog>
-        </Card>
-      </div>
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Instructor</DialogTitle>
+            </DialogHeader>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddInstructor();
+              }}
+              className="space-y-4"
+            >
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full border p-2 rounded"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full border p-2 rounded"
+                required
+              />
+              <input
+                type="text"
+                name="department"
+                placeholder="Department"
+                value={formData.department}
+                onChange={handleInputChange}
+                className="w-full border p-2 rounded"
+                required
+              />
+              <input
+                type="text"
+                name="jobTitle"
+                placeholder="Job Title"
+                value={formData.jobTitle}
+                onChange={handleInputChange}
+                className="w-full border p-2 rounded"
+                required
+              />
+              {/*<Button type="submit">Add Instructor</Button>*/}
+            </form>
+          </DialogContent>
+        </Dialog>
+      </Card>
+    </div>
   );
 }

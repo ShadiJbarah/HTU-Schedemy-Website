@@ -17,11 +17,11 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Filter, X } fro
 import { getTimeSlot } from "@/lib/store";
 
 export function EditableScheduledClassesTable({
-                                                scheduledEntries,
-                                                courses,
-                                                instructors: initialInstructors,
-                                                tas,
-                                              }: {
+  scheduledEntries,
+  courses,
+  instructors: initialInstructors,
+  tas,
+}: {
   scheduledEntries: any[];
   courses: any[];
   instructors: any[];
@@ -59,7 +59,7 @@ export function EditableScheduledClassesTable({
   });
   const [instructors, setInstructors] = useState(initialInstructors);
   const [isSaving, setIsSaving] = useState(false);
-  const [conflicts, setConflicts] = useState<Record<string, {instructor?: string, ta?: string}>>({});
+  const [conflicts, setConflicts] = useState<Record<string, { instructor?: string, ta?: string }>>({});
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
@@ -68,14 +68,14 @@ export function EditableScheduledClassesTable({
   const [selectedDayFilter, setSelectedDayFilter] = useState<string>('');
 
   const originalEntries = useState(() =>
-      scheduledEntries.map(entry => ({
-        ...entry,
-        courseId: entry.courseId || entry.course?.id,
-        instructorId: entry.instructorId || entry.instructor?.id,
-        taId: entry.taId || entry.ta?.id,
-        roomId: entry.roomId || entry.room?.id,
-        timeSlotId: entry.timeSlotId || entry.timeSlot?.id
-      }))
+    scheduledEntries.map(entry => ({
+      ...entry,
+      courseId: entry.courseId || entry.course?.id,
+      instructorId: entry.instructorId || entry.instructor?.id,
+      taId: entry.taId || entry.ta?.id,
+      roomId: entry.roomId || entry.room?.id,
+      timeSlotId: entry.timeSlotId || entry.timeSlot?.id
+    }))
   )[0];
 
 
@@ -120,7 +120,7 @@ export function EditableScheduledClassesTable({
   const hasActiveFilters = selectedTimeSlotFilter || selectedDayFilter;
 
   const availableDays = [...new Set(editableEntries.map(entry =>
-      entry.timeSlot?.day || entry.day
+    entry.timeSlot?.day || entry.day
   ))].filter(Boolean);
 
   const getAllEntriesForConflictCheck = () => {
@@ -135,8 +135,8 @@ export function EditableScheduledClassesTable({
   };
 
   const detectConflicts = (allEntries: any[]) => {
-    const newConflicts: Record<string, {instructor?: string, ta?: string}> = {};
-    const timeSlotMap: Record<string, {instructors: Set<string>, tas: Set<string>}> = {};
+    const newConflicts: Record<string, { instructor?: string, ta?: string }> = {};
+    const timeSlotMap: Record<string, { instructors: Set<string>, tas: Set<string> }> = {};
 
     allEntries.forEach(entry => {
       const timeSlotKey = `${entry.timeSlot?.startTime}-${entry.timeSlot?.endTime}-${entry.timeSlot?.day}`;
@@ -195,7 +195,7 @@ export function EditableScheduledClassesTable({
 
     setEditableEntries(prev => {
       const updatedEntries = prev.map(entry =>
-          entry.id == id ? { ...entry, [field]: value, isModified: true } : entry
+        entry.id == id ? { ...entry, [field]: value, isModified: true } : entry
       );
 
       // Immediately check for conflicts with the updated data
@@ -285,7 +285,7 @@ export function EditableScheduledClassesTable({
         timeSlotId: entry.timeSlotId || entry.timeSlot?.id
       }));
 
-      const response = await fetch('/api/schedules', {
+      const response = await fetch('/schedules', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -331,8 +331,8 @@ export function EditableScheduledClassesTable({
       if (!entryInstructorId || entryInstructorId != instructorId) return false;
 
       const sameTimeSlot = entry.timeSlot?.startTime == currentEntry.timeSlot?.startTime &&
-          entry.timeSlot?.endTime == currentEntry.timeSlot?.endTime &&
-          entry.timeSlot?.day == currentEntry.timeSlot?.day;
+        entry.timeSlot?.endTime == currentEntry.timeSlot?.endTime &&
+        entry.timeSlot?.day == currentEntry.timeSlot?.day;
 
       return sameTimeSlot;
     });
@@ -360,280 +360,280 @@ export function EditableScheduledClassesTable({
       if (!entryTaId || entryTaId != taId) return false;
 
       const sameTimeSlot = entry.timeSlot?.startTime == currentEntry.timeSlot?.startTime &&
-          entry.timeSlot?.endTime == currentEntry.timeSlot?.endTime &&
-          entry.timeSlot?.day == currentEntry.timeSlot?.day;
+        entry.timeSlot?.endTime == currentEntry.timeSlot?.endTime &&
+        entry.timeSlot?.day == currentEntry.timeSlot?.day;
 
       return sameTimeSlot;
     });
   }
 
   return (
-      <div className="space-y-4">
-        <div className="flex flex-wrap gap-4 items-center p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-600" />
-            {/*<span className="text-sm font-medium text-gray-700">Filters:</span>*/}
-            <span className="text-sm font-medium text-gray-700">Time Slot:</span>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            {/*<label className="text-xs text-gray-600">Time Slot</label>*/}
-            <Select value={selectedTimeSlotFilter} onValueChange={(value) => setSelectedTimeSlotFilter(value === 'all' ? '' : value)}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="All time slots" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All time slots</SelectItem>
-                {timeSlots.map((slot) => (
-                    <SelectItem key={slot.id} value={slot.id.toString()}>
-                      {slot.startTime} - {slot.endTime} ({slot.day})
-                    </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Day Filter */}
-          {/*<div className="flex flex-col gap-1">*/}
-          {/*  <label className="text-xs text-gray-600">Day</label>*/}
-          {/*  <Select value={selectedDayFilter} onValueChange={(value) => setSelectedDayFilter(value === 'all' ? '' : value)}>*/}
-          {/*    <SelectTrigger className="w-[140px]">*/}
-          {/*      <SelectValue placeholder="All days" />*/}
-          {/*    </SelectTrigger>*/}
-          {/*    <SelectContent>*/}
-          {/*      <SelectItem value="all">All days</SelectItem>*/}
-          {/*      {availableDays.map((day) => (*/}
-          {/*          <SelectItem key={day} value={day}>*/}
-          {/*            {day}*/}
-          {/*          </SelectItem>*/}
-          {/*      ))}*/}
-          {/*    </SelectContent>*/}
-          {/*  </Select>*/}
-          {/*</div>*/}
-
-          {/* Clear Filters Button */}
-          {hasActiveFilters && (
-
-                <div>
-                  <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={clearFilters}
-                      className="flex items-center gap-2"
-                  >
-                    <X className="h-4 w-4" />
-                    Clear Filters
-                  </Button>
-                </div>
-
-
-          )}
-
-          {hasActiveFilters && (
-              <div className="flex gap-2 text-sm text-blue-600">
-                {selectedTimeSlotFilter && (
-                    <span className="bg-blue-100 px-2 py-1 rounded">
-                  Time: {timeSlots.find(t => t.id.toString() === selectedTimeSlotFilter)?.startTime} - {timeSlots.find(t => t.id.toString() === selectedTimeSlotFilter)?.endTime}
-                </span>
-                )}
-                {selectedDayFilter && (
-                    <span className="bg-blue-100 px-2 py-1 rounded">
-                  Day: {selectedDayFilter}
-                </span>
-                )}
-              </div>
-          )}
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-4 items-center p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-gray-600" />
+          {/*<span className="text-sm font-medium text-gray-700">Filters:</span>*/}
+          <span className="text-sm font-medium text-gray-700">Time Slot:</span>
         </div>
 
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-600">
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredEntries.length)} of {filteredEntries.length} entries
-            {hasActiveFilters && ` (filtered from ${editableEntries.length} total)`}
-          </div>
-          <div className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
-          </div>
+        <div className="flex flex-col gap-1">
+          {/*<label className="text-xs text-gray-600">Time Slot</label>*/}
+          <Select value={selectedTimeSlotFilter} onValueChange={(value) => setSelectedTimeSlotFilter(value === 'all' ? '' : value)}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="All time slots" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All time slots</SelectItem>
+              {timeSlots.map((slot) => (
+                <SelectItem key={slot.id} value={slot.id.toString()}>
+                  {slot.startTime} - {slot.endTime} ({slot.day})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Time Slot</TableHead>
-              <TableHead>Day</TableHead>
-              <TableHead>Room</TableHead>
-              <TableHead>Course</TableHead>
-              <TableHead>Instructor</TableHead>
-              <TableHead>Teaching Assistant</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentEntries.map((entry) => (
-                <TableRow
-                    key={entry.id}
-                    className={
-                      conflicts[entry.id]
-                          ? 'bg-red-50'
-                          : isEntryComplete(entry)
-                              ? 'bg-blue-200'
-                              : ''
-                    }
-                >
-                  <TableCell>{entry.timeSlot?.startTime} - {entry.timeSlot?.endTime}</TableCell>
-                  <TableCell>{entry.timeSlot?.day}</TableCell>
-                  <TableCell>{entry.room?.name}</TableCell>
-                  <TableCell>
-                    <Select
-                        value={entry.courseId || ''}
-                        onValueChange={(value) => handleChange(entry.id, 'courseId', value)}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        {(() => {
-                          const selectedCourse = courses.find(
-                              (course) => course.id == entry.courseId || course.id == entry.course?.id
-                          );
-                          return selectedCourse ? (
-                              <span>{selectedCourse.name}</span>
-                          ) : (
-                              <SelectValue placeholder="Select course" />
-                          );
-                        })()}
-                      </SelectTrigger>
-                      <SelectContent>
-                        {courses.map((course) => (
-                            <SelectItem key={course.id} value={course.id}>
-                              {course.name}
-                            </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
+        {/* Day Filter */}
+        {/*<div className="flex flex-col gap-1">*/}
+        {/*  <label className="text-xs text-gray-600">Day</label>*/}
+        {/*  <Select value={selectedDayFilter} onValueChange={(value) => setSelectedDayFilter(value === 'all' ? '' : value)}>*/}
+        {/*    <SelectTrigger className="w-[140px]">*/}
+        {/*      <SelectValue placeholder="All days" />*/}
+        {/*    </SelectTrigger>*/}
+        {/*    <SelectContent>*/}
+        {/*      <SelectItem value="all">All days</SelectItem>*/}
+        {/*      {availableDays.map((day) => (*/}
+        {/*          <SelectItem key={day} value={day}>*/}
+        {/*            {day}*/}
+        {/*          </SelectItem>*/}
+        {/*      ))}*/}
+        {/*    </SelectContent>*/}
+        {/*  </Select>*/}
+        {/*</div>*/}
 
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <Select
-                          value={entry.instructorId || ''}
-                          onValueChange={(value) => handleChange(entry.id, 'instructorId', value)}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          {(() => {
-                            const selectedInstructor = instructors.find(
-                                (inst) => inst.id == entry.instructorId || inst.id == entry.instructor?.id
-                            );
-                            return selectedInstructor ? (
-                                <span>{selectedInstructor.name} - Load: {selectedInstructor.teachingLoad}</span>
-                            ) : (
-                                <SelectValue placeholder="Select Instructor" />
-                            );
-                          })()}
-                        </SelectTrigger>
-                        <SelectContent>
-                          {instructors.map((instructor) => (
-                              <SelectItem
-                                  key={instructor.id}
-                                  value={instructor.id}
-                                  disabled={isInstructorBooked(instructor.id, entry)}
-                              >
-                                {instructor.name} - Load: {instructor.teachingLoad}
-                              </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {conflicts[entry.id]?.instructor && (
-                          <p className="text-xs text-red-500 mt-1">
-                            {conflicts[entry.id]?.instructor}
-                          </p>
-                      )}
-                    </div>
-                  </TableCell>
+        {/* Clear Filters Button */}
+        {hasActiveFilters && (
 
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <Select
-                          value={entry.taId || ''}
-                          onValueChange={(value) => handleChange(entry.id, 'taId', value)}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          {(() => {
-                            const selectedTA = tas.find(
-                                (ta) => ta.id == entry.taId || ta.id == entry.ta?.id
-                            );
-
-                            return selectedTA ? (
-                                <span>{selectedTA.name}</span>
-                            ) : (
-                                <SelectValue placeholder="Select TA" />
-                            );
-                          })()}
-                        </SelectTrigger>
-                        <SelectContent>
-                          {tas.map((ta) => (
-                              <SelectItem
-                                  key={ta.id}
-                                  value={ta.id}
-                                  disabled={isTABooked(ta.id, entry)}
-                              >
-                                {ta.name}
-                              </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {conflicts[entry.id]?.ta && (
-                          <p className="text-xs text-red-500 mt-1">
-                            {conflicts[entry.id]?.ta}
-                          </p>
-                      )}
-                    </div>
-                  </TableCell>
-
-                </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        {/* Pagination Controls */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {/*<Button*/}
-            {/*    variant="outline"*/}
-            {/*    size="sm"*/}
-            {/*    onClick={goToFirstPage}*/}
-            {/*    disabled={currentPage === 1}*/}
-            {/*>*/}
-            {/*  <ChevronsLeft className="h-4 w-4" />*/}
-            {/*</Button>*/}
+          <div>
             <Button
-                variant="outline"
-                size="sm"
-                onClick={goToPreviousPage}
-                disabled={currentPage === 1}
+              variant="outline"
+              size="sm"
+              onClick={clearFilters}
+              className="flex items-center gap-2"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <X className="h-4 w-4" />
+              Clear Filters
             </Button>
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            {/*<Button*/}
-            {/*    variant="outline"*/}
-            {/*    size="sm"*/}
-            {/*    onClick={goToLastPage}*/}
-            {/*    disabled={currentPage === totalPages}*/}
-            {/*>*/}
-            {/*  <ChevronsRight className="h-4 w-4" />*/}
-            {/*</Button>*/}
           </div>
 
-          <Button
-              onClick={handleSaveAll}
-              disabled={isSaving || Object.keys(conflicts).length > 0}
-          >
-            {isSaving ? 'Saving All Changes...' : 'Save All Changes'}
-          </Button>
+
+        )}
+
+        {hasActiveFilters && (
+          <div className="flex gap-2 text-sm text-blue-600">
+            {selectedTimeSlotFilter && (
+              <span className="bg-blue-100 px-2 py-1 rounded">
+                Time: {timeSlots.find(t => t.id.toString() === selectedTimeSlotFilter)?.startTime} - {timeSlots.find(t => t.id.toString() === selectedTimeSlotFilter)?.endTime}
+              </span>
+            )}
+            {selectedDayFilter && (
+              <span className="bg-blue-100 px-2 py-1 rounded">
+                Day: {selectedDayFilter}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-between items-center">
+        <div className="text-sm text-gray-600">
+          Showing {startIndex + 1} to {Math.min(endIndex, filteredEntries.length)} of {filteredEntries.length} entries
+          {hasActiveFilters && ` (filtered from ${editableEntries.length} total)`}
+        </div>
+        <div className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
         </div>
       </div>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Time Slot</TableHead>
+            <TableHead>Day</TableHead>
+            <TableHead>Room</TableHead>
+            <TableHead>Course</TableHead>
+            <TableHead>Instructor</TableHead>
+            <TableHead>Teaching Assistant</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {currentEntries.map((entry) => (
+            <TableRow
+              key={entry.id}
+              className={
+                conflicts[entry.id]
+                  ? 'bg-red-50'
+                  : isEntryComplete(entry)
+                    ? 'bg-blue-200'
+                    : ''
+              }
+            >
+              <TableCell>{entry.timeSlot?.startTime} - {entry.timeSlot?.endTime}</TableCell>
+              <TableCell>{entry.timeSlot?.day}</TableCell>
+              <TableCell>{entry.room?.name}</TableCell>
+              <TableCell>
+                <Select
+                  value={entry.courseId || ''}
+                  onValueChange={(value) => handleChange(entry.id, 'courseId', value)}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    {(() => {
+                      const selectedCourse = courses.find(
+                        (course) => course.id == entry.courseId || course.id == entry.course?.id
+                      );
+                      return selectedCourse ? (
+                        <span>{selectedCourse.name}</span>
+                      ) : (
+                        <SelectValue placeholder="Select course" />
+                      );
+                    })()}
+                  </SelectTrigger>
+                  <SelectContent>
+                    {courses.map((course) => (
+                      <SelectItem key={course.id} value={course.id}>
+                        {course.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </TableCell>
+
+              <TableCell>
+                <div className="flex flex-col">
+                  <Select
+                    value={entry.instructorId || ''}
+                    onValueChange={(value) => handleChange(entry.id, 'instructorId', value)}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      {(() => {
+                        const selectedInstructor = instructors.find(
+                          (inst) => inst.id == entry.instructorId || inst.id == entry.instructor?.id
+                        );
+                        return selectedInstructor ? (
+                          <span>{selectedInstructor.name} - Load: {selectedInstructor.teachingLoad}</span>
+                        ) : (
+                          <SelectValue placeholder="Select Instructor" />
+                        );
+                      })()}
+                    </SelectTrigger>
+                    <SelectContent>
+                      {instructors.map((instructor) => (
+                        <SelectItem
+                          key={instructor.id}
+                          value={instructor.id}
+                          disabled={isInstructorBooked(instructor.id, entry)}
+                        >
+                          {instructor.name} - Load: {instructor.teachingLoad}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {conflicts[entry.id]?.instructor && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {conflicts[entry.id]?.instructor}
+                    </p>
+                  )}
+                </div>
+              </TableCell>
+
+              <TableCell>
+                <div className="flex flex-col">
+                  <Select
+                    value={entry.taId || ''}
+                    onValueChange={(value) => handleChange(entry.id, 'taId', value)}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      {(() => {
+                        const selectedTA = tas.find(
+                          (ta) => ta.id == entry.taId || ta.id == entry.ta?.id
+                        );
+
+                        return selectedTA ? (
+                          <span>{selectedTA.name}</span>
+                        ) : (
+                          <SelectValue placeholder="Select TA" />
+                        );
+                      })()}
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tas.map((ta) => (
+                        <SelectItem
+                          key={ta.id}
+                          value={ta.id}
+                          disabled={isTABooked(ta.id, entry)}
+                        >
+                          {ta.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {conflicts[entry.id]?.ta && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {conflicts[entry.id]?.ta}
+                    </p>
+                  )}
+                </div>
+              </TableCell>
+
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          {/*<Button*/}
+          {/*    variant="outline"*/}
+          {/*    size="sm"*/}
+          {/*    onClick={goToFirstPage}*/}
+          {/*    disabled={currentPage === 1}*/}
+          {/*>*/}
+          {/*  <ChevronsLeft className="h-4 w-4" />*/}
+          {/*</Button>*/}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToPreviousPage}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToNextPage}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          {/*<Button*/}
+          {/*    variant="outline"*/}
+          {/*    size="sm"*/}
+          {/*    onClick={goToLastPage}*/}
+          {/*    disabled={currentPage === totalPages}*/}
+          {/*>*/}
+          {/*  <ChevronsRight className="h-4 w-4" />*/}
+          {/*</Button>*/}
+        </div>
+
+        <Button
+          onClick={handleSaveAll}
+          disabled={isSaving || Object.keys(conflicts).length > 0}
+        >
+          {isSaving ? 'Saving All Changes...' : 'Save All Changes'}
+        </Button>
+      </div>
+    </div>
   );
 }
