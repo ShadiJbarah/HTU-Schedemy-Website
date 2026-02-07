@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const TA_API_URL = 'https://ajapi.htupholio.com/instructor/ta';
+const TA_API_URL = 'http://54.236.18.115:8080/instructor/ta';
 
 export async function GET() {
   try {
@@ -23,3 +23,4 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch TAs' }, { status: 500 });
   }
 }
+

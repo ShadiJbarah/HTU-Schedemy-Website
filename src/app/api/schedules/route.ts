@@ -1,7 +1,7 @@
 // app/api/schedules/route.ts
 import { NextResponse } from 'next/server';
 
-const API_URL = 'https://ajapi.htupholio.com/schedules';
+const API_URL = 'http://54.236.18.115:8080/schedules';
 
 export async function GET() {
   try {
@@ -42,3 +42,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to save schedule' }, { status: 500 });
   }
 }
+
