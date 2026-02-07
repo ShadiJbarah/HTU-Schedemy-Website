@@ -8,8 +8,8 @@ import {
   tas as mockInitialTAs, tas
 } from './data';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ajapi.htupholio.com';
-//const API_BASE_URL_ROUTING = 'https://master.d2hh6o27ll1srl.amplifyapp.com/';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://54.145.35.49:8080';
+const API_BASE_URL_ROUTING = 'https://master.d2hh6o27ll1srl.amplifyapp.com/';
 // const API_BASE_URL_ROUTING = 'http://localhost:3001/';
 
 interface AppState {
@@ -67,11 +67,11 @@ export async function getCourses(): Promise<Course[]> {
     const isFetchFailedError = typedError instanceof TypeError && typedError.message.toLowerCase().includes('fetch failed');
 
     if (isFetchFailedError) {
-      console.warn(`[FETCH FAILED] Could not connect to the backend API for getCourses at ${url}. ` +
-        `Please ensure your backend server is running and accessible. ` +
-        `API_BASE_URL is: ${API_BASE_URL}. Details: ${typedError.message}`);
+        console.warn(`[FETCH FAILED] Could not connect to the backend API for getCourses at ${url}. ` +
+                     `Please ensure your backend server is running and accessible. ` +
+                     `API_BASE_URL is: ${API_BASE_URL}. Details: ${typedError.message}`);
     } else {
-      console.warn(`Error in getCourses when fetching from ${url}: ${typedError.message}`);
+        console.warn(`Error in getCourses when fetching from ${url}: ${typedError.message}`);
     }
     return [];
   }
@@ -91,10 +91,10 @@ export async function getCourseById(id: string): Promise<Course | undefined> {
     const isFetchFailedError = typedError instanceof TypeError && typedError.message.toLowerCase().includes('fetch failed');
 
     if (isFetchFailedError) {
-      console.warn(`[FETCH FAILED] Could not connect to the backend API for getCourseById at ${url}. ` +
-        `Details: ${typedError.message}`);
+        console.warn(`[FETCH FAILED] Could not connect to the backend API for getCourseById at ${url}. ` +
+                     `Details: ${typedError.message}`);
     } else {
-      console.warn(`Error fetching course ${id} from ${url}: ${typedError.message}`);
+        console.warn(`Error fetching course ${id} from ${url}: ${typedError.message}`);
     }
     return undefined;
   }
@@ -120,7 +120,7 @@ export async function addCourse(course: Omit<Course, 'id'>): Promise<Course> {
     const typedError = error as Error;
     console.error(`Error in addCourse when posting to ${url}: ${typedError.message}`);
     if (typedError instanceof TypeError && typedError.message.toLowerCase().includes('fetch failed')) {
-      console.warn(`[FETCH FAILED] Could not connect to the backend API for addCourse at ${url}.`);
+        console.warn(`[FETCH FAILED] Could not connect to the backend API for addCourse at ${url}.`);
     }
     throw error;
   }
@@ -137,15 +137,15 @@ export async function updateCourse(updatedCourse: Course): Promise<Course | null
       body: JSON.stringify(updatedCourse),
     });
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Failed to update course and parse error response' }));
+       const errorData = await response.json().catch(() => ({ error: 'Failed to update course and parse error response' }));
       throw new Error(errorData.details || errorData.error || `Failed to update course: ${response.statusText} (status: ${response.status})`);
     }
     return await response.json();
   } catch (error) {
     const typedError = error as Error;
     console.error(`Error in updateCourse when putting to ${url}: ${typedError.message}`);
-    if (typedError instanceof TypeError && typedError.message.toLowerCase().includes('fetch failed')) {
-      console.warn(`[FETCH FAILED] Could not connect to the backend API for updateCourse at ${url}.`);
+     if (typedError instanceof TypeError && typedError.message.toLowerCase().includes('fetch failed')) {
+        console.warn(`[FETCH FAILED] Could not connect to the backend API for updateCourse at ${url}.`);
     }
     throw error;
   }
@@ -166,7 +166,7 @@ export async function deleteCourse(id: string): Promise<boolean> {
     const typedError = error as Error;
     console.error(`Error in deleteCourse when deleting ${url}: ${typedError.message}`);
     if (typedError instanceof TypeError && typedError.message.toLowerCase().includes('fetch failed')) {
-      console.warn(`[FETCH FAILED] Could not connect to the backend API for deleteCourse at ${url}.`);
+        console.warn(`[FETCH FAILED] Could not connect to the backend API for deleteCourse at ${url}.`);
     }
     throw error;
   }
@@ -236,7 +236,7 @@ export async function getScheduledEntries(): Promise<ScheduleEntry[]> {
     const typedError = error as Error;
     if (typedError instanceof TypeError && typedError.message.toLowerCase().includes('fetch failed')) {
       console.warn(`[FETCH FAILED] Could not connect to the backend API for getScheduledEntries at ${url}. ` +
-        `API_BASE_URL is: ${API_BASE_URL}. Details: ${typedError.message}`);
+                   `API_BASE_URL is: ${API_BASE_URL}. Details: ${typedError.message}`);
     } else {
       console.warn(`Error in getScheduledEntries when fetching from ${url}: ${typedError.message}`);
     }
@@ -244,7 +244,7 @@ export async function getScheduledEntries(): Promise<ScheduleEntry[]> {
   }
 }
 export async function getFullScheduledEntries(): Promise<FullScheduleEntry[]> {
-  const url = `${API_BASE_URL_ROUTING}/schedules`;
+  const url = `${API_BASE_URL_ROUTING}api/schedules`;
 
   try {
     const response = await fetch(url, {
@@ -309,14 +309,14 @@ export async function getFullScheduledEntries(): Promise<FullScheduleEntry[]> {
 
 // export async function getFullScheduledEntries(): Promise<FullScheduleEntry[]> {
 //   console.warn("getFullScheduledEntries is using in-memory data for scheduled entries and related entities. Needs API integration.");
-//   const currentScheduleEntries = getScheduledEntries(); 
+//   const currentScheduleEntries = getScheduledEntries();
 
 //   const fullEntriesPromises = currentScheduleEntries.map(async (entry) => {
-//     const course = await getCourseById(entry.courseId); 
-//     const instructor = await getInstructorById(entry.instructorId); 
-//     const ta = entry.taId ? await getTARById(entry.taId) : undefined;  
-//     const room = await getRoomById(entry.roomId); 
-//     const timeSlot = await getTimeSlotById(entry.timeSlotId); 
+//     const course = await getCourseById(entry.courseId);
+//     const instructor = await getInstructorById(entry.instructorId);
+//     const ta = entry.taId ? await getTARById(entry.taId) : undefined;
+//     const room = await getRoomById(entry.roomId);
+//     const timeSlot = await getTimeSlotById(entry.timeSlotId);
 
 //     if (!course || !instructor || !room || !timeSlot) {
 //       console.error("Data inconsistency for schedule entry:", entry, {course, instructor, room, timeSlot});
@@ -339,13 +339,13 @@ export async function getFullScheduledEntries(): Promise<FullScheduleEntry[]> {
 //     return resolvedEntries.filter(entry => entry !== null) as FullScheduleEntry[];
 //   } catch (error) {
 //     console.error("Error processing full schedule entries:", error);
-//     return []; 
+//     return [];
 //   }
 // }
 
 
 export async function addScheduleEntry(entry: Omit<ScheduleEntry, 'id'>): Promise<ScheduleEntry> {
-  const url = '/schedules'; // Call internal API route
+  const url = '/api/schedules'; // Call internal API route
   try {
     const apiEntry = {
       course: entry.courseId ? { id: parseInt(entry.courseId) } : null,
@@ -440,7 +440,7 @@ export async function getInstructors(): Promise<Instructor[]> {
     }).filter(Boolean) as Instructor[];
 
     if (instructors.length !== rawData.length) {
-      console.warn(`[DATA WARNING] Some instructor items from ${url} were invalid or malformed and were filtered out or defaulted.`);
+        console.warn(`[DATA WARNING] Some instructor items from ${url} were invalid or malformed and were filtered out or defaulted.`);
     }
     return instructors;
   } catch (error) {
@@ -448,10 +448,10 @@ export async function getInstructors(): Promise<Instructor[]> {
     const isFetchFailedError = typedError instanceof TypeError && typedError.message.toLowerCase().includes('fetch failed');
 
     if (isFetchFailedError) {
-      console.warn(`[FETCH FAILED] Could not connect to the backend API for getInstructors at ${url}. ` +
-        `API_BASE_URL is: ${API_BASE_URL}. Details: ${typedError.message}`);
+        console.warn(`[FETCH FAILED] Could not connect to the backend API for getInstructors at ${url}. ` +
+                     `API_BASE_URL is: ${API_BASE_URL}. Details: ${typedError.message}`);
     } else {
-      console.warn(`Error in getInstructors when fetching from ${url}: ${typedError.message}. Stack: ${typedError.stack}`);
+        console.warn(`Error in getInstructors when fetching from ${url}: ${typedError.message}. Stack: ${typedError.stack}`);
     }
     return [];
   }
@@ -489,7 +489,7 @@ export function getInstructorById(id: string): Instructor | undefined {
 }
 
 export async function addInstructor(instructor: Omit<Instructor, 'id'>): Promise<Instructor> {
-  // TODO: Implement API call to Spring Boot backend
+   // TODO: Implement API call to Spring Boot backend
   console.warn("addInstructor is using mock/in-memory logic. Needs API integration.");
   // Simulating API call:
   const newInstructor: Instructor = { ...instructor, id: `inst${Date.now()}` };
@@ -546,14 +546,14 @@ export async function getTAs(): Promise<TA[]> {
   } catch (error) {
     const typedError = error as Error;
     const isFetchFailedError =
-      typedError instanceof TypeError &&
-      typedError.message.toLowerCase().includes('fetch failed');
+        typedError instanceof TypeError &&
+        typedError.message.toLowerCase().includes('fetch failed');
 
     if (isFetchFailedError) {
       console.warn(
-        `[FETCH FAILED] Could not connect to the backend API for getTAs at ${url}. ` +
-        `Please ensure your backend server is running and accessible. ` +
-        `API_BASE_URL_ROUTING is: ${API_BASE_URL_ROUTING}. Details: ${typedError.message}`
+          `[FETCH FAILED] Could not connect to the backend API for getTAs at ${url}. ` +
+          `Please ensure your backend server is running and accessible. ` +
+          `API_BASE_URL_ROUTING is: ${API_BASE_URL_ROUTING}. Details: ${typedError.message}`
       );
     } else {
       console.warn(`Error in getTAs when fetching from ${url}: ${typedError.message}`);
@@ -625,4 +625,3 @@ export function getTimeSlotById(id: string): TimeSlot | undefined {
 
 //   return null;
 // }
-
